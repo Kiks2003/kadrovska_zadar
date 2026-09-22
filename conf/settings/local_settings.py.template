@@ -1,0 +1,42 @@
+# Local settings template used for development and CI.
+# This file is intentionally safe to commit and reads values from environment
+# variables when present. For local development you can copy this file to
+# conf/settings/local_settings.py and fill in values, or rely on env vars.
+
+import os
+from pathlib import Path
+
+##################################
+# SECRET_KEY
+# - Prefer DJANGO_SECRET_KEY env var (CI / secrets).
+# - For local development, generate your own key with:
+#       python -c "from django.core.management import utils; print(utils.get_random_secret_key())"
+# and set it in your environment or paste it below.
+##################################
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "") or ""
+
+##################################
+# DATABASES
+##################################
+DATABASES = {
+    "default": {
+        "ENGINE": os.environ.get("DATABASE_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DATABASE_NAME", ""),
+        "USER": os.environ.get("DATABASE_USER", ""),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
+        "HOST": os.environ.get("DATABASE_HOST", ""),
+        "PORT": os.environ.get("DATABASE_PORT", ""),
+    }
+}
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "").strip()
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.yourprovider.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "true").lower() == "true"
+EMAIL_TIMEOUT = 10
