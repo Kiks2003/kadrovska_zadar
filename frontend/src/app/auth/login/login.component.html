@@ -1,0 +1,36 @@
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <h3 class="login-title">Prijava</h3>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label for="username">Korisničko ime</label>
+        <input id="username" type="text" formControlName="username" autocomplete="off">
+        @if (loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched) {
+          <span class="error">Korisničko ime je obvezno polje!</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Lozinka</label>
+        <div class="password-wrapper">
+          <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="off">
+          <button type="button" class="toggle-password" (click)="showPassword.set(!showPassword())">
+            {{ showPassword() ? 'Sakrij' : 'Prikaži' }}
+          </button>
+        </div>
+        @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+          <span class="error">Lozinka je obvezno polje!</span>
+        }
+      </div>
+
+      @if (loginError()) {
+        <div class="login-error">{{ loginError() }}</div>
+      }
+
+      <button type="submit" class="submit-btn" [disabled]="submitLoading()">
+        {{ submitLoading() ? 'Prijava u tijeku...' : 'Prijava' }}
+      </button>
+    </form>
+  </div>
+</div>

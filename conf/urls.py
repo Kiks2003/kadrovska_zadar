@@ -22,6 +22,7 @@ urlpatterns = [
 
     path('api/', include([
         path('kadrovska-zadar/', include('kadrovska_zadar.urls')),
+        path('accounts/', include('accounts.urls')),
     ])),
 
     # Swagger
