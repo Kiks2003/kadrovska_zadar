@@ -1,0 +1,58 @@
+<div class="radnici-wrapper">
+  <div class="header-row">
+    <h2>Radnici</h2>
+    <a routerLink="/radnici/novi" class="btn-primary">
+      <i class="fa fa-plus"></i>
+      Dodaj radnika
+    </a>
+  </div>
+
+  @if (deleteError()) {
+    <div class="banner-error">{{ deleteError() }}</div>
+  }
+
+  @if (loading()) {
+    <p>Učitavanje...</p>
+  } @else if (radnici().length === 0) {
+    <p class="empty-state">Nema unesenih radnika.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Ime</th>
+          <th>Prezime</th>
+          <th>OIB</th>
+          <th>Struka</th>
+          <th>Status</th>
+          <th>Poslodavac</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of radnici(); track r.id) {
+          <tr>
+            <td>{{ r.ime }}</td>
+            <td>{{ r.prezime }}</td>
+            <td>{{ r.oib }}</td>
+            <td>{{ r.struka }}</td>
+            <td>
+              <span class="status-badge" [class.inactive]="r.status === 'neaktivan'">
+                {{ STATUS_LABELS[r.status] }}
+              </span>
+            </td>
+            <td>{{ r.poslodavac || '—' }}</td>
+            <td class="actions">
+              <button type="button" class="btn-delete" (click)="remove(r)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalCount() > radnici().length) {
+      <p class="pagination-hint">Prikazano {{ radnici().length }} od {{ totalCount() }}.</p>
+    }
+  }
+</div>

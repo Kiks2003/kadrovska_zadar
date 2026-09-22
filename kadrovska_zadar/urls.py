@@ -1,6 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
+
+from kadrovska_zadar import views
 
 app_name = 'kadrovska_zadar'
 
-urlpatterns = [
-]
+router = DefaultRouter()
+router.register('radnici', views.RadnikViewSet, basename='radnik')
+
+urlpatterns = router.urls

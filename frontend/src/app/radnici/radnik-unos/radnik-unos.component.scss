@@ -1,0 +1,115 @@
+.unos-wrapper {
+  max-width: 760px;
+}
+
+h2 {
+  margin-top: 0;
+  color: var(--color-text);
+}
+
+fieldset {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-surface);
+}
+
+legend {
+  padding: 0 var(--space-2);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field.full-width {
+  grid-column: 1 / -1;
+  margin-top: var(--space-4);
+}
+
+label {
+  font-size: var(--font-size-sm);
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+}
+
+input, select, textarea {
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  font-family: var(--font-family-base);
+}
+
+textarea {
+  height: auto;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  margin-top: 4px;
+}
+
+.banner-error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: var(--font-size-md);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--font-size-md);
+}
+
+.btn-secondary:hover {
+  background: var(--color-surface-muted);
+}

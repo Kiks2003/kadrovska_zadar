@@ -1,0 +1,30 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">Kadrovska Zadar</div>
+    <nav>
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="active" class="nav-link">
+          <i [class]="item.icon"></i>
+          <span>{{ item.text }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="content-area">
+    <header class="topbar">
+      <span class="page-title">Kadrovska evidencija</span>
+      <div class="user-info">
+        <span>{{ loginService.korisnik()?.username }}</span>
+        <button type="button" class="logout-btn" (click)="logout()">
+          <i class="fa fa-sign-out"></i>
+          Odjava
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

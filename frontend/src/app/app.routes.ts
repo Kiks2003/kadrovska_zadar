@@ -9,7 +9,21 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+    loadComponent: () => import('./layout/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+      },
+      {
+        path: 'radnici',
+        loadComponent: () => import('./radnici/radnici-list/radnici-list.component').then(m => m.RadniciListComponent)
+      },
+      {
+        path: 'radnici/novi',
+        loadComponent: () => import('./radnici/radnik-unos/radnik-unos.component').then(m => m.RadnikUnosComponent)
+      }
+    ]
   },
   {
     path: '**',

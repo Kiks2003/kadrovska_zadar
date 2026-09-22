@@ -1,17 +1,12 @@
 .home-wrapper {
   max-width: 480px;
-  margin: 80px auto;
-  text-align: center;
-  font-family: sans-serif;
 }
 
-button {
-  margin-top: 16px;
-  height: 38px;
-  padding: 0 16px;
-  border: none;
-  border-radius: 6px;
-  background: #1f2937;
-  color: #fff;
-  cursor: pointer;
+h2 {
+  margin-top: 0;
+  color: var(--color-text);
+}
+
+p {
+  color: var(--color-text-muted);
 }

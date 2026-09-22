@@ -1,0 +1,146 @@
+<div class="unos-wrapper">
+  <h2>Dodaj radnika</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <fieldset>
+      <legend>Osobni podaci</legend>
+
+      <div class="grid">
+        <div class="field">
+          <label for="ime">Ime *</label>
+          <input id="ime" type="text" formControlName="ime">
+          @if (form.get('ime')?.hasError('required') && form.get('ime')?.touched) {
+            <span class="error">Ime je obvezno polje!</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="prezime">Prezime *</label>
+          <input id="prezime" type="text" formControlName="prezime">
+          @if (form.get('prezime')?.hasError('required') && form.get('prezime')?.touched) {
+            <span class="error">Prezime je obvezno polje!</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="oib">OIB *</label>
+          <input id="oib" type="text" formControlName="oib" maxlength="11">
+          @if (form.get('oib')?.hasError('required') && form.get('oib')?.touched) {
+            <span class="error">OIB je obvezno polje!</span>
+          }
+          @if (form.get('oib')?.hasError('pattern') && form.get('oib')?.touched) {
+            <span class="error">OIB mora sadržavati točno 11 znamenki.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="struka">Struka *</label>
+          <input id="struka" type="text" formControlName="struka">
+          @if (form.get('struka')?.hasError('required') && form.get('struka')?.touched) {
+            <span class="error">Struka je obvezno polje!</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="datum_rodjenja">Datum rođenja</label>
+          <input id="datum_rodjenja" type="date" formControlName="datum_rodjenja">
+        </div>
+
+        <div class="field">
+          <label for="drzavljanstvo">Državljanstvo</label>
+          <input id="drzavljanstvo" type="text" formControlName="drzavljanstvo">
+        </div>
+
+        <div class="field">
+          <label for="adresa">Adresa</label>
+          <input id="adresa" type="text" formControlName="adresa">
+        </div>
+
+        <div class="field">
+          <label for="telefon">Telefon</label>
+          <input id="telefon" type="text" formControlName="telefon">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email">
+          @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+            <span class="error">Unesite ispravnu email adresu.</span>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Zaposlenje</legend>
+
+      <div class="grid">
+        <div class="field">
+          <label for="poslodavac">Poslodavac</label>
+          <input id="poslodavac" type="text" formControlName="poslodavac">
+        </div>
+
+        <div class="field">
+          <label for="datum_zaposlenja">Datum zaposlenja</label>
+          <input id="datum_zaposlenja" type="date" formControlName="datum_zaposlenja">
+        </div>
+
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" formControlName="status">
+            <option value="aktivan">Aktivan</option>
+            <option value="neaktivan">Neaktivan</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Radna dozvola</legend>
+
+      <div class="grid">
+        <div class="field">
+          <label for="broj_putovnice">Broj putovnice</label>
+          <input id="broj_putovnice" type="text" formControlName="broj_putovnice">
+        </div>
+
+        <div class="field">
+          <label for="vrsta_dozvole">Vrsta dozvole</label>
+          <select id="vrsta_dozvole" formControlName="vrsta_dozvole">
+            <option value="">-- Odaberi --</option>
+            <option value="dozvola_boravak_rad">Dozvola za boravak i rad</option>
+            <option value="potvrda_prijava_rada">Potvrda o prijavi rada</option>
+            <option value="plava_karta_eu">EU plava karta</option>
+            <option value="ostalo">Ostalo</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="datum_izdavanja_dozvole">Datum izdavanja dozvole</label>
+          <input id="datum_izdavanja_dozvole" type="date" formControlName="datum_izdavanja_dozvole">
+        </div>
+
+        <div class="field">
+          <label for="datum_isteka_dozvole">Datum isteka dozvole</label>
+          <input id="datum_isteka_dozvole" type="date" formControlName="datum_isteka_dozvole">
+        </div>
+      </div>
+
+      <div class="field full-width">
+        <label for="napomena">Napomena</label>
+        <textarea id="napomena" formControlName="napomena" rows="3"></textarea>
+      </div>
+    </fieldset>
+
+    @if (submitError()) {
+      <div class="banner-error">{{ submitError() }}</div>
+    }
+
+    <div class="form-actions">
+      <a routerLink="/radnici" class="btn-secondary">Odustani</a>
+      <button type="submit" class="btn-primary" [disabled]="submitLoading()">
+        {{ submitLoading() ? 'Spremanje...' : 'Spremi' }}
+      </button>
+    </div>
+  </form>
+</div>
