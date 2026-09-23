@@ -16,15 +16,28 @@ export interface Radnik {
   datum_zaposlenja: string | null;
   status: RadnikStatus;
   broj_putovnice: string;
-  vrsta_dozvole: VrstaDozvole | '';
-  datum_izdavanja_dozvole: string | null;
-  datum_isteka_dozvole: string | null;
+  napomena: string;
+  dozvole: RadnaDozvola[];
+  created_at: string;
+  updated_at: string;
+}
+
+export type RadnikCreatePayload = Omit<Radnik, 'id' | 'dozvole' | 'created_at' | 'updated_at'>;
+
+export interface RadnaDozvola {
+  id: number;
+  radnik: number;
+  vrsta: VrstaDozvole;
+  broj_dozvole: string;
+  izdao: string;
+  datum_izdavanja: string | null;
+  datum_isteka: string;
   napomena: string;
   created_at: string;
   updated_at: string;
 }
 
-export type RadnikCreatePayload = Omit<Radnik, 'id' | 'created_at' | 'updated_at'>;
+export type RadnaDozvolaPayload = Omit<RadnaDozvola, 'id' | 'created_at' | 'updated_at'>;
 
 export interface PaginatedResponse<T> {
   count: number;

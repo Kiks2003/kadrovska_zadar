@@ -1,6 +1,11 @@
 <div class="unos-wrapper">
-  <h2>Dodaj radnika</h2>
+  <h2>{{ radnikId() ? 'Uredi radnika' : 'Dodaj radnika' }}</h2>
 
+  @if (loading()) {
+    <p>Učitavanje...</p>
+  } @else if (loadError()) {
+    <div class="banner-error">{{ loadError() }}</div>
+  } @else {
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <fieldset>
       <legend>Osobni podaci</legend>
@@ -52,6 +57,11 @@
         </div>
 
         <div class="field">
+          <label for="broj_putovnice">Broj putovnice</label>
+          <input id="broj_putovnice" type="text" formControlName="broj_putovnice">
+        </div>
+
+        <div class="field">
           <label for="adresa">Adresa</label>
           <input id="adresa" type="text" formControlName="adresa">
         </div>
@@ -96,39 +106,10 @@
     </fieldset>
 
     <fieldset>
-      <legend>Radna dozvola</legend>
+      <legend>Napomena</legend>
 
-      <div class="grid">
-        <div class="field">
-          <label for="broj_putovnice">Broj putovnice</label>
-          <input id="broj_putovnice" type="text" formControlName="broj_putovnice">
-        </div>
-
-        <div class="field">
-          <label for="vrsta_dozvole">Vrsta dozvole</label>
-          <select id="vrsta_dozvole" formControlName="vrsta_dozvole">
-            <option value="">-- Odaberi --</option>
-            <option value="dozvola_boravak_rad">Dozvola za boravak i rad</option>
-            <option value="potvrda_prijava_rada">Potvrda o prijavi rada</option>
-            <option value="plava_karta_eu">EU plava karta</option>
-            <option value="ostalo">Ostalo</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="datum_izdavanja_dozvole">Datum izdavanja dozvole</label>
-          <input id="datum_izdavanja_dozvole" type="date" formControlName="datum_izdavanja_dozvole">
-        </div>
-
-        <div class="field">
-          <label for="datum_isteka_dozvole">Datum isteka dozvole</label>
-          <input id="datum_isteka_dozvole" type="date" formControlName="datum_isteka_dozvole">
-        </div>
-      </div>
-
-      <div class="field full-width">
-        <label for="napomena">Napomena</label>
-        <textarea id="napomena" formControlName="napomena" rows="3"></textarea>
+      <div class="field">
+        <textarea id="napomena" formControlName="napomena" rows="3" aria-label="Napomena"></textarea>
       </div>
     </fieldset>
 
@@ -137,10 +118,11 @@
     }
 
     <div class="form-actions">
-      <a routerLink="/radnici" class="btn-secondary">Odustani</a>
+      <a [routerLink]="radnikId() ? ['/radnici', radnikId()] : ['/radnici']" class="btn-secondary">Odustani</a>
       <button type="submit" class="btn-primary" [disabled]="submitLoading()">
         {{ submitLoading() ? 'Spremanje...' : 'Spremi' }}
       </button>
     </div>
   </form>
+  }
 </div>

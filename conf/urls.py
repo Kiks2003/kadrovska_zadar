@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.urls import path, include, re_path
 from django.conf.urls.static import static
 from django.views.decorators.cache import never_cache
+from rest_framework.permissions import IsAdminUser
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 
@@ -25,10 +26,10 @@ urlpatterns = [
         path('accounts/', include('accounts.urls')),
     ])),
 
-    # Swagger
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    # Swagger (staff-only — schema exposes the full data model, incl. PII field names)
+    path('api/schema/', SpectacularAPIView.as_view(permission_classes=[IsAdminUser]), name='schema'),
+    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema', permission_classes=[IsAdminUser]), name='swagger-ui'),
+    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema', permission_classes=[IsAdminUser]), name='redoc'),
 ]
 
 if settings.DEBUG:

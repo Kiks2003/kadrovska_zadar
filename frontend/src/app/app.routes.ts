@@ -17,11 +17,19 @@ export const routes: Routes = [
       },
       {
         path: 'radnici',
-        loadComponent: () => import('./radnici/radnici-list/radnici-list.component').then(m => m.RadniciListComponent)
+        loadComponent: () => import('./components/radnici/radnici-list/radnici-list.component').then(m => m.RadniciListComponent)
       },
       {
         path: 'radnici/novi',
-        loadComponent: () => import('./radnici/radnik-unos/radnik-unos.component').then(m => m.RadnikUnosComponent)
+        loadComponent: () => import('./components/radnici/radnik-unos/radnik-unos.component').then(m => m.RadnikUnosComponent)
+      },
+      {
+        path: 'radnici/:id',
+        loadComponent: () => import('./components/radnici/radnik-profil/radnik-profil.component').then(m => m.RadnikProfilComponent)
+      },
+      {
+        path: 'radnici/:id/uredi',
+        loadComponent: () => import('./components/radnici/radnik-unos/radnik-unos.component').then(m => m.RadnikUnosComponent)
       }
     ]
   },

@@ -4,6 +4,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from accounts.check_user import build_data
@@ -16,6 +17,8 @@ from accounts.serializers import (
 
 class Prijava(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'login'
 
     @extend_schema(
         summary="Prijava korisnika",

@@ -6,5 +6,6 @@ app_name = 'kadrovska_zadar'
 
 router = DefaultRouter()
 router.register('radnici', views.RadnikViewSet, basename='radnik')
+router.register('dozvole', views.RadnaDozvolaViewSet, basename='radna-dozvola')
 
 urlpatterns = router.urls

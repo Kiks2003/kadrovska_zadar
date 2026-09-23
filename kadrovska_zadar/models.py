@@ -12,12 +12,6 @@ class Radnik(models.Model):
         AKTIVAN = 'aktivan', 'Aktivan'
         NEAKTIVAN = 'neaktivan', 'Neaktivan'
 
-    class VrstaDozvole(models.TextChoices):
-        DOZVOLA_BORAVAK_RAD = 'dozvola_boravak_rad', 'Dozvola za boravak i rad'
-        POTVRDA_PRIJAVA_RADA = 'potvrda_prijava_rada', 'Potvrda o prijavi rada'
-        PLAVA_KARTA_EU = 'plava_karta_eu', 'EU plava karta'
-        OSTALO = 'ostalo', 'Ostalo'
-
     # Osobni podaci
     ime = models.CharField(max_length=100)
     prezime = models.CharField(max_length=100)
@@ -34,11 +28,7 @@ class Radnik(models.Model):
     datum_zaposlenja = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.AKTIVAN)
 
-    # Radna dozvola
     broj_putovnice = models.CharField(max_length=50, blank=True)
-    vrsta_dozvole = models.CharField(max_length=30, choices=VrstaDozvole.choices, blank=True)
-    datum_izdavanja_dozvole = models.DateField(null=True, blank=True)
-    datum_isteka_dozvole = models.DateField(null=True, blank=True)
 
     napomena = models.TextField(blank=True)
 
@@ -52,3 +42,31 @@ class Radnik(models.Model):
 
     def __str__(self):
         return f'{self.ime} {self.prezime}'
+
+
+class RadnaDozvola(models.Model):
+    class Vrsta(models.TextChoices):
+        DOZVOLA_BORAVAK_RAD = 'dozvola_boravak_rad', 'Dozvola za boravak i rad'
+        POTVRDA_PRIJAVA_RADA = 'potvrda_prijava_rada', 'Potvrda o prijavi rada'
+        PLAVA_KARTA_EU = 'plava_karta_eu', 'EU plava karta'
+        OSTALO = 'ostalo', 'Ostalo'
+
+    radnik = models.ForeignKey(Radnik, on_delete=models.CASCADE, related_name='dozvole')
+    vrsta = models.CharField(max_length=30, choices=Vrsta.choices)
+    broj_dozvole = models.CharField(max_length=50, blank=True)
+    izdao = models.CharField(max_length=150, blank=True)
+    datum_izdavanja = models.DateField(null=True, blank=True)
+    # null=True samo radi starih zapisa; API ga traži kao obvezno polje.
+    datum_isteka = models.DateField(null=True)
+    napomena = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-datum_isteka', '-datum_izdavanja']
+        verbose_name = 'Radna dozvola'
+        verbose_name_plural = 'Radne dozvole'
+
+    def __str__(self):
+        return f'{self.get_vrsta_display()} – {self.radnik} (do {self.datum_isteka})'

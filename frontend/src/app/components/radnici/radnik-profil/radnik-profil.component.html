@@ -1,0 +1,159 @@
+<div class="profil-wrapper">
+  <a routerLink="/radnici" class="back-link">
+    <i class="fa fa-arrow-left"></i>
+    Natrag na popis
+  </a>
+
+  @if (loading()) {
+    <p>Učitavanje...</p>
+  } @else if (error()) {
+    <div class="banner-error">{{ error() }}</div>
+  } @else if (radnik(); as r) {
+    <div class="profil-header">
+      <div class="avatar">{{ inicijali() }}</div>
+      <div class="header-info">
+        <h2>{{ r.ime }} {{ r.prezime }}</h2>
+        <p class="subtitle">{{ r.struka }}@if (r.poslodavac) { · {{ r.poslodavac }}}</p>
+      </div>
+      <span class="status-badge" [class.inactive]="r.status === 'neaktivan'">
+        {{ STATUS_LABELS[r.status] }}
+      </span>
+      <a [routerLink]="['/radnici', r.id, 'uredi']" class="btn-outline">
+        <i class="fa fa-pencil"></i>
+        Uredi
+      </a>
+    </div>
+
+    @if (r.dozvole.length === 0) {
+      <div class="banner-warning">
+        <i class="fa fa-exclamation-triangle"></i>
+        Radnik nema unesenu radnu dozvolu.
+      </div>
+    } @else if (stanjeAktualne() === 'istekla') {
+      <div class="banner-error">
+        <i class="fa fa-exclamation-circle"></i>
+        Radna dozvola je istekla prije {{ -danaDoIsteka()! }} dana.
+      </div>
+    } @else if (stanjeAktualne() === 'uskoro') {
+      <div class="banner-warning">
+        <i class="fa fa-clock-o"></i>
+        Radna dozvola istječe za {{ danaDoIsteka() }} dana.
+      </div>
+    }
+
+    <section class="card">
+      <h3>Osobni podaci</h3>
+      <dl>
+        <dt>Ime</dt><dd>{{ r.ime }}</dd>
+        <dt>Prezime</dt><dd>{{ r.prezime }}</dd>
+        <dt>OIB</dt><dd>{{ r.oib }}</dd>
+        <dt>Broj putovnice</dt><dd>{{ r.broj_putovnice || '—' }}</dd>
+        <dt>Datum rođenja</dt><dd>{{ (r.datum_rodjenja | date:'dd.MM.yyyy.') || '—' }}</dd>
+        <dt>Državljanstvo</dt><dd>{{ r.drzavljanstvo || '—' }}</dd>
+        <dt>Adresa</dt><dd>{{ r.adresa || '—' }}</dd>
+        <dt>Telefon</dt>
+        <dd>
+          @if (r.telefon) { <a [href]="'tel:' + r.telefon">{{ r.telefon }}</a> } @else { — }
+        </dd>
+        <dt>E-mail</dt>
+        <dd>
+          @if (r.email) { <a [href]="'mailto:' + r.email">{{ r.email }}</a> } @else { — }
+        </dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h3>Zaposlenje</h3>
+      <dl>
+        <dt>Struka</dt><dd>{{ r.struka }}</dd>
+        <dt>Poslodavac</dt><dd>{{ r.poslodavac || '—' }}</dd>
+        <dt>Datum zaposlenja</dt><dd>{{ (r.datum_zaposlenja | date:'dd.MM.yyyy.') || '—' }}</dd>
+        <dt>Status</dt><dd>{{ STATUS_LABELS[r.status] }}</dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h3>Radne dozvole</h3>
+        @if (urediDozvolu() === null) {
+          <button type="button" class="btn-outline" (click)="urediDozvolu.set('nova')">
+            <i class="fa fa-plus"></i>
+            Dodaj dozvolu
+          </button>
+        }
+      </div>
+
+      @if (dozvolaError()) {
+        <div class="banner-error">{{ dozvolaError() }}</div>
+      }
+
+      @if (urediDozvolu() === 'nova') {
+        <app-dozvola-form
+          [radnikId]="r.id"
+          (saved)="onDozvolaSaved($event)"
+          (cancelled)="urediDozvolu.set(null)" />
+      }
+
+      @for (d of r.dozvole; track d.id) {
+        @if (urediDozvolu() === d.id) {
+          <app-dozvola-form
+            [radnikId]="r.id"
+            [dozvola]="d"
+            (saved)="onDozvolaSaved($event)"
+            (cancelled)="urediDozvolu.set(null)" />
+        } @else {
+          <div class="dozvola" [class.aktualna]="d.id === aktualnaDozvola()?.id">
+            <div class="dozvola-header">
+              <div>
+                <strong>{{ VRSTA_DOZVOLE_LABELS[d.vrsta] }}</strong>
+                @switch (stanjeDozvole(d.datum_isteka)) {
+                  @case ('istekla') { <span class="pill danger">Istekla</span> }
+                  @case ('uskoro') { <span class="pill warning">Uskoro istječe</span> }
+                  @case ('vazeca') { <span class="pill success">Važeća</span> }
+                }
+                @if (d.id === aktualnaDozvola()?.id && r.dozvole.length > 1) {
+                  <span class="pill neutral">Aktualna</span>
+                }
+              </div>
+              <div class="dozvola-actions">
+                <button type="button" class="btn-icon" title="Uredi dozvolu"
+                        [disabled]="urediDozvolu() !== null" (click)="urediDozvolu.set(d.id)">
+                  <i class="fa fa-pencil"></i>
+                </button>
+                <button type="button" class="btn-icon danger" title="Obriši dozvolu"
+                        [disabled]="urediDozvolu() !== null" (click)="obrisiDozvolu(d)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <dl>
+              <dt>Broj dozvole</dt><dd>{{ d.broj_dozvole || '—' }}</dd>
+              <dt>Izdao</dt><dd>{{ d.izdao || '—' }}</dd>
+              <dt>Datum izdavanja</dt><dd>{{ (d.datum_izdavanja | date:'dd.MM.yyyy.') || '—' }}</dd>
+              <dt>Datum isteka</dt><dd>{{ (d.datum_isteka | date:'dd.MM.yyyy.') || '—' }}</dd>
+              @if (d.napomena) {
+                <dt>Napomena</dt><dd class="napomena">{{ d.napomena }}</dd>
+              }
+            </dl>
+          </div>
+        }
+      } @empty {
+        @if (urediDozvolu() !== 'nova') {
+          <p class="empty-state">Nema unesenih dozvola.</p>
+        }
+      }
+    </section>
+
+    @if (r.napomena) {
+      <section class="card">
+        <h3>Napomena</h3>
+        <p class="napomena">{{ r.napomena }}</p>
+      </section>
+    }
+
+    <p class="meta">
+      Kreirano {{ r.created_at | date:'dd.MM.yyyy. HH:mm' }} ·
+      Zadnja izmjena {{ r.updated_at | date:'dd.MM.yyyy. HH:mm' }}
+    </p>
+  }
+</div>

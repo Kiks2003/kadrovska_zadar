@@ -30,7 +30,7 @@
       </thead>
       <tbody>
         @for (r of radnici(); track r.id) {
-          <tr>
+          <tr class="clickable" [routerLink]="['/radnici', r.id]">
             <td>{{ r.ime }}</td>
             <td>{{ r.prezime }}</td>
             <td>{{ r.oib }}</td>
@@ -42,7 +42,7 @@
             </td>
             <td>{{ r.poslodavac || '—' }}</td>
             <td class="actions">
-              <button type="button" class="btn-delete" (click)="remove(r)">
+              <button type="button" class="btn-delete" (click)="remove(r); $event.stopPropagation()" title="Obriši">
                 <i class="fa fa-trash"></i>
               </button>
             </td>

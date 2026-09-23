@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RadnikService } from '../../services/radnik.service';
-import { Radnik, STATUS_LABELS } from '../../models/radnik';
-import { parseApiError } from '../../shared/parse-api-error';
+import { RadnikService } from '../../../services/radnik.service';
+import { Radnik, STATUS_LABELS } from '../../../models/radnik';
+import { parseApiError } from '../../../shared/parse-api-error';
 
 @Component({
   selector: 'app-radnici-list',

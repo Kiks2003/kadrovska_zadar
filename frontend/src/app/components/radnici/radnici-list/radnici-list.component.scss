@@ -48,6 +48,14 @@ th {
   font-weight: var(--font-weight-semibold);
 }
 
+tr.clickable {
+  cursor: pointer;
+}
+
+tr.clickable:hover td {
+  background: var(--color-primary-lighter);
+}
+
 .status-badge {
   display: inline-block;
   padding: 2px 10px;

@@ -1,0 +1,56 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h4>{{ dozvola() ? 'Uredi dozvolu' : 'Nova radna dozvola' }}</h4>
+
+  <div class="grid">
+    <div class="field">
+      <label for="vrsta">Vrsta dozvole *</label>
+      <select id="vrsta" formControlName="vrsta">
+        @for (v of VRSTE; track v[0]) {
+          <option [value]="v[0]">{{ v[1] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="broj_dozvole">Broj dozvole / rješenja</label>
+      <input id="broj_dozvole" type="text" formControlName="broj_dozvole">
+    </div>
+
+    <div class="field">
+      <label for="datum_izdavanja">Datum izdavanja</label>
+      <input id="datum_izdavanja" type="date" formControlName="datum_izdavanja">
+    </div>
+
+    <div class="field">
+      <label for="datum_isteka">Datum isteka *</label>
+      <input id="datum_isteka" type="date" formControlName="datum_isteka">
+      @if (form.get('datum_isteka')?.hasError('required') && form.get('datum_isteka')?.touched) {
+        <span class="error">Datum isteka je obvezno polje!</span>
+      }
+      @if (form.hasError('istekPrijeIzdavanja')) {
+        <span class="error">Datum isteka ne može biti prije datuma izdavanja.</span>
+      }
+    </div>
+
+    <div class="field">
+      <label for="izdao">Izdao</label>
+      <input id="izdao" type="text" formControlName="izdao" placeholder="npr. PU zadarska">
+    </div>
+
+    <div class="field full-width">
+      <label for="dozvola_napomena">Napomena</label>
+      <textarea id="dozvola_napomena" formControlName="napomena" rows="2"></textarea>
+    </div>
+  </div>
+
+  @if (submitError()) {
+    <div class="banner-error">{{ submitError() }}</div>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="cancelled.emit()">Odustani</button>
+    <button type="submit" class="btn-primary" [disabled]="submitLoading()">
+      {{ submitLoading() ? 'Spremanje...' : 'Spremi dozvolu' }}
+    </button>
+  </div>
+</form>
