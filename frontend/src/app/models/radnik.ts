@@ -18,11 +18,12 @@ export interface Radnik {
   broj_putovnice: string;
   napomena: string;
   dozvole: RadnaDozvola[];
+  dokumenti: Dokument[];
   created_at: string;
   updated_at: string;
 }
 
-export type RadnikCreatePayload = Omit<Radnik, 'id' | 'dozvole' | 'created_at' | 'updated_at'>;
+export type RadnikCreatePayload = Omit<Radnik, 'id' | 'dozvole' | 'dokumenti' | 'created_at' | 'updated_at'>;
 
 export interface RadnaDozvola {
   id: number;
@@ -55,5 +56,26 @@ export const VRSTA_DOZVOLE_LABELS: Record<VrstaDozvole, string> = {
   dozvola_boravak_rad: 'Dozvola za boravak i rad',
   potvrda_prijava_rada: 'Potvrda o prijavi rada',
   plava_karta_eu: 'EU plava karta',
+  ostalo: 'Ostalo',
+};
+
+export type VrstaDokumenta = 'radna_dozvola' | 'putovnica' | 'ugovor' | 'ostalo';
+
+export interface Dokument {
+  id: number;
+  radnik: number;
+  dozvola: number | null;
+  vrsta: VrstaDokumenta;
+  naziv: string;
+  izvorni_naziv: string;
+  velicina: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export const VRSTA_DOKUMENTA_LABELS: Record<VrstaDokumenta, string> = {
+  radna_dozvola: 'Radna dozvola',
+  putovnica: 'Putovnica',
+  ugovor: 'Ugovor o radu',
   ostalo: 'Ostalo',
 };

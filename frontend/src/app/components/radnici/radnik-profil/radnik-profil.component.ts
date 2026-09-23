@@ -7,11 +7,12 @@ import { RadnaDozvola, Radnik, STATUS_LABELS, VRSTA_DOZVOLE_LABELS } from '../..
 import { parseApiError } from '../../../shared/parse-api-error';
 import { danaDo, stanjeDozvole } from '../../../shared/stanje-dozvole';
 import { DozvolaFormComponent } from '../dozvola-form/dozvola-form.component';
+import { RadnikDokumentiComponent } from '../radnik-dokumenti/radnik-dokumenti.component';
 
 @Component({
   selector: 'app-radnik-profil',
   standalone: true,
-  imports: [RouterLink, DatePipe, DozvolaFormComponent],
+  imports: [RouterLink, DatePipe, DozvolaFormComponent, RadnikDokumentiComponent],
   templateUrl: './radnik-profil.component.html',
   styleUrl: './radnik-profil.component.scss'
 })

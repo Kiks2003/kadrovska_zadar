@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
+  Dokument,
   PaginatedResponse,
   RadnaDozvola,
   RadnaDozvolaPayload,
@@ -16,6 +17,7 @@ export class RadnikService {
   private http = inject(HttpClient);
   private readonly BASE_URL = 'api/kadrovska-zadar/radnici/';
   private readonly DOZVOLE_URL = 'api/kadrovska-zadar/dozvole/';
+  private readonly DOKUMENTI_URL = 'api/kadrovska-zadar/dokumenti/';
 
   getRadnici(): Observable<PaginatedResponse<Radnik>> {
     return this.http.get<PaginatedResponse<Radnik>>(this.BASE_URL);
@@ -47,5 +49,19 @@ export class RadnikService {
 
   deleteDozvola(id: number): Observable<void> {
     return this.http.delete<void>(`${this.DOZVOLE_URL}${id}/`);
+  }
+
+  uploadDokument(data: FormData): Observable<Dokument> {
+    return this.http.post<Dokument>(this.DOKUMENTI_URL, data);
+  }
+
+  // PDF kao Blob; preuzmi=true vraća ga kao privitak (Content-Disposition: attachment).
+  getDokumentPdf(id: number, preuzmi = false): Observable<Blob> {
+    const params = preuzmi ? { preuzmi: '1' } : undefined;
+    return this.http.get(`${this.DOKUMENTI_URL}${id}/sadrzaj/`, { params, responseType: 'blob' });
+  }
+
+  deleteDokument(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.DOKUMENTI_URL}${id}/`);
   }
 }

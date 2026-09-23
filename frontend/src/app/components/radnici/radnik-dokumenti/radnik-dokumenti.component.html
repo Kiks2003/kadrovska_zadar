@@ -1,0 +1,97 @@
+<section class="card">
+  <div class="card-header">
+    <h3>Dokumenti</h3>
+    @if (!prikaziFormu()) {
+      <button type="button" class="btn-outline" (click)="otvoriFormu()">
+        <i class="fa fa-upload"></i>
+        Dodaj dokument
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="banner-error">{{ error() }}</div>
+  }
+
+  @if (prikaziFormu()) {
+    <form class="upload" [formGroup]="form" (ngSubmit)="upload()">
+      <div class="field full-width">
+        <label for="datoteka">PDF dokument * <small>(najviše {{ MAX_MB }} MB)</small></label>
+        <input id="datoteka" type="file" accept="application/pdf,.pdf" (change)="onFileChange($event)">
+        @if (datotekaError()) {
+          <span class="error">{{ datotekaError() }}</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="dok_naziv">Naziv</label>
+        <input id="dok_naziv" type="text" formControlName="naziv" placeholder="Prema nazivu datoteke">
+      </div>
+
+      <div class="field">
+        <label for="dok_vrsta">Vrsta dokumenta</label>
+        <select id="dok_vrsta" formControlName="vrsta">
+          @for (v of VRSTE; track v[0]) {
+            <option [value]="v[0]">{{ v[1] }}</option>
+          }
+        </select>
+      </div>
+
+      @if (radnik().dozvole.length) {
+        <div class="field full-width">
+          <label for="dok_dozvola">Povezana radna dozvola</label>
+          <select id="dok_dozvola" formControlName="dozvola">
+            <option [ngValue]="null">— Nije povezan —</option>
+            @for (d of radnik().dozvole; track d.id) {
+              <option [ngValue]="d.id">{{ nazivDozvole(d.id) }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="prikaziFormu.set(false)">Odustani</button>
+        <button type="submit" class="btn-primary" [disabled]="uploadLoading()">
+          {{ uploadLoading() ? 'Učitavanje...' : 'Učitaj dokument' }}
+        </button>
+      </div>
+    </form>
+  }
+
+  @for (d of dokumenti(); track d.id) {
+    <div class="dokument">
+      <i class="fa fa-file-pdf-o ikona" aria-hidden="true"></i>
+      <div class="info">
+        <button type="button" class="naziv" (click)="pregledaj(d)" [title]="d.izvorni_naziv">{{ d.naziv }}</button>
+        <div class="meta">
+          {{ VRSTA_DOKUMENTA_LABELS[d.vrsta] }}
+          @if (nazivDozvole(d.dozvola); as dozvola) { · {{ dozvola }} }
+          · {{ velicina(d.velicina) }} · {{ d.created_at | date:'dd.MM.yyyy.' }}
+        </div>
+      </div>
+      <div class="akcije">
+        <button type="button" class="btn-icon" title="Pregledaj" [disabled]="ucitavaSeId() === d.id" (click)="pregledaj(d)">
+          <i class="fa" [class.fa-eye]="ucitavaSeId() !== d.id" [class.fa-spinner]="ucitavaSeId() === d.id"></i>
+        </button>
+        <button type="button" class="btn-icon" title="Preuzmi" (click)="preuzmi(d)">
+          <i class="fa fa-download"></i>
+        </button>
+        <button type="button" class="btn-icon danger" title="Obriši" (click)="obrisi(d)">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  } @empty {
+    @if (!prikaziFormu()) {
+      <p class="empty-state">Nema učitanih dokumenata.</p>
+    }
+  }
+</section>
+
+@if (pregled(); as p) {
+  <app-pdf-pregled
+    [url]="p.url"
+    [naslov]="p.dokument.naziv"
+    (preuzmi)="preuzmi(p.dokument)"
+    (zatvori)="zatvoriPregled()" />
+}

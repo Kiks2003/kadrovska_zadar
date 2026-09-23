@@ -8,6 +8,7 @@ production.py
 local_settings.py
 /static/
 /media/
+/private_media/
 
 # IDE
 .idea/

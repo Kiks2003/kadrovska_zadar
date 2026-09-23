@@ -1,0 +1,15 @@
+<div class="overlay" (click)="zatvori.emit()">
+  <div class="prozor" role="dialog" aria-modal="true" [attr.aria-label]="naslov()" (click)="$event.stopPropagation()">
+    <div class="traka">
+      <span class="naslov">{{ naslov() }}</span>
+      <button type="button" class="btn-outline" (click)="preuzmi.emit()">
+        <i class="fa fa-download"></i>
+        Preuzmi
+      </button>
+      <button type="button" class="btn-zatvori" title="Zatvori (Esc)" (click)="zatvori.emit()">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    <iframe [src]="sigurniUrl()" [title]="naslov()"></iframe>
+  </div>
+</div>
