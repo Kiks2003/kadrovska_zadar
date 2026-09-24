@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.viewsets import ModelViewSet
 
+from kadrovska_zadar.filters import RadnikFilter
 from kadrovska_zadar.models import Dokument, RadnaDozvola, Radnik
 from kadrovska_zadar.serializers import DokumentSerializer, RadnaDozvolaSerializer, RadnikSerializer
 
@@ -10,7 +11,7 @@ from kadrovska_zadar.serializers import DokumentSerializer, RadnaDozvolaSerializ
 class RadnikViewSet(ModelViewSet):
     queryset = Radnik.objects.prefetch_related('dozvole', 'dokumenti')
     serializer_class = RadnikSerializer
-    filterset_fields = ['status', 'struka', 'dozvole__vrsta']
+    filterset_class = RadnikFilter
     search_fields = ['ime', 'prezime', 'oib']
 
 

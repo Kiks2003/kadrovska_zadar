@@ -7,24 +7,89 @@
     </a>
   </div>
 
+  <form class="filteri" [formGroup]="filterForm">
+    <div class="field pretraga">
+      <label for="f_search">Pretraga</label>
+      <input id="f_search" type="search" formControlName="search" placeholder="Ime, prezime ili OIB">
+    </div>
+
+    <div class="field">
+      <label for="f_status">Status</label>
+      <select id="f_status" formControlName="status">
+        <option value="">Svi</option>
+        <option value="aktivan">Aktivan</option>
+        <option value="neaktivan">Neaktivan</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="f_stanje">Stanje dozvole</label>
+      <select id="f_stanje" formControlName="stanje_dozvole">
+        <option value="">Sva</option>
+        <option value="vazeca">Važeća</option>
+        <option value="uskoro">Uskoro istječe</option>
+        <option value="istekla">Istekla</option>
+        <option value="bez">Bez dozvole</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="f_vrsta">Vrsta dozvole</label>
+      <select id="f_vrsta" formControlName="vrsta_dozvole">
+        <option value="">Sve</option>
+        @for (v of VRSTE_DOZVOLE; track v[0]) {
+          <option [value]="v[0]">{{ v[1] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="f_poslodavac">Poslodavac</label>
+      <input id="f_poslodavac" type="text" formControlName="poslodavac">
+    </div>
+
+    <div class="field">
+      <label for="f_struka">Struka</label>
+      <input id="f_struka" type="text" formControlName="struka">
+    </div>
+
+    <div class="filteri-footer">
+      <span class="rezultat">
+        @if (!loading()) { Pronađeno: <strong>{{ totalCount() }}</strong> }
+      </span>
+      @if (imaFiltera()) {
+        <button type="button" class="btn-link" (click)="ocistiFiltere()">
+          <i class="fa fa-times"></i>
+          Očisti filtre
+        </button>
+      }
+    </div>
+  </form>
+
   @if (deleteError()) {
     <div class="banner-error">{{ deleteError() }}</div>
   }
+  @if (error()) {
+    <div class="banner-error">{{ error() }}</div>
+  }
 
-  @if (loading()) {
+  @if (loading() && radnici().length === 0) {
     <p>Učitavanje...</p>
   } @else if (radnici().length === 0) {
-    <p class="empty-state">Nema unesenih radnika.</p>
+    <p class="empty-state">
+      {{ imaFiltera() ? 'Nijedan radnik ne odgovara odabranim filtrima.' : 'Nema unesenih radnika.' }}
+    </p>
   } @else {
-    <table>
+    <table [class.loading]="loading()">
       <thead>
         <tr>
           <th>Ime</th>
           <th>Prezime</th>
           <th>OIB</th>
           <th>Struka</th>
-          <th>Status</th>
           <th>Poslodavac</th>
+          <th>Status</th>
+          <th>Dozvola ističe</th>
           <th></th>
         </tr>
       </thead>
@@ -35,12 +100,19 @@
             <td>{{ r.prezime }}</td>
             <td>{{ r.oib }}</td>
             <td>{{ r.struka }}</td>
+            <td>{{ r.poslodavac || '—' }}</td>
             <td>
               <span class="status-badge" [class.inactive]="r.status === 'neaktivan'">
                 {{ STATUS_LABELS[r.status] }}
               </span>
             </td>
-            <td>{{ r.poslodavac || '—' }}</td>
+            <td>
+              @if (aktualniIstek(r); as istek) {
+                <span class="istek" [class]="stanjeDozvole(istek)">{{ istek | date:'dd.MM.yyyy.' }}</span>
+              } @else {
+                <span class="istek bez">Nema</span>
+              }
+            </td>
             <td class="actions">
               <button type="button" class="btn-delete" (click)="remove(r); $event.stopPropagation()" title="Obriši">
                 <i class="fa fa-trash"></i>
@@ -51,8 +123,18 @@
       </tbody>
     </table>
 
-    @if (totalCount() > radnici().length) {
-      <p class="pagination-hint">Prikazano {{ radnici().length }} od {{ totalCount() }}.</p>
+    @if (totalPages() > 1) {
+      <div class="paginacija">
+        <button type="button" [disabled]="page() <= 1 || loading()" (click)="idiNaStranicu(page() - 1)">
+          <i class="fa fa-chevron-left"></i>
+          Prethodna
+        </button>
+        <span>Stranica {{ page() }} od {{ totalPages() }}</span>
+        <button type="button" [disabled]="page() >= totalPages() || loading()" (click)="idiNaStranicu(page() + 1)">
+          Sljedeća
+          <i class="fa fa-chevron-right"></i>
+        </button>
+      </div>
     }
   }
 </div>

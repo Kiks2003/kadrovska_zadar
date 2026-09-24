@@ -19,8 +19,8 @@ export class RadnikService {
   private readonly DOZVOLE_URL = 'api/kadrovska-zadar/dozvole/';
   private readonly DOKUMENTI_URL = 'api/kadrovska-zadar/dokumenti/';
 
-  getRadnici(): Observable<PaginatedResponse<Radnik>> {
-    return this.http.get<PaginatedResponse<Radnik>>(this.BASE_URL);
+  getRadnici(params: Record<string, string> = {}): Observable<PaginatedResponse<Radnik>> {
+    return this.http.get<PaginatedResponse<Radnik>>(this.BASE_URL, { params });
   }
 
   getRadnik(id: number): Observable<Radnik> {
