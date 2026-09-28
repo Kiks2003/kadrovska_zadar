@@ -1,6 +1,6 @@
 <div class="layout">
   <aside class="sidebar">
-    <div class="brand">Kadrovska Zadar</div>
+    <a routerLink="/" class="brand">Kadrovska Zadar</a>
     <nav>
       @for (item of navItems; track item.path) {
         <a [routerLink]="item.path" routerLinkActive="active" class="nav-link">
