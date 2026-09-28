@@ -133,6 +133,27 @@ table.loading {
   color: var(--color-text-subtle);
 }
 
+.dokumentacija {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
+.dokumentacija.potpuna {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.dokumentacija.nepotpuna {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  cursor: help;
+}
+
 .paginacija {
   display: flex;
   align-items: center;

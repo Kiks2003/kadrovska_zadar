@@ -1,23 +1,26 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RadnikService } from '../../../services/radnik.service';
-import { RadnaDozvola, Radnik, STATUS_LABELS, VRSTA_DOZVOLE_LABELS } from '../../../models/radnik';
+import { Dokument, RadnaDozvola, Radnik, STATUS_LABELS, VRSTA_DOZVOLE_LABELS } from '../../../models/radnik';
 import { parseApiError } from '../../../shared/parse-api-error';
 import { danaDo, stanjeDozvole } from '../../../shared/stanje-dozvole';
+import { aktualnaDozvola, StavkaDokumentacije } from '../../../shared/dokumentacija';
 import { DozvolaFormComponent } from '../dozvola-form/dozvola-form.component';
 import { RadnikDokumentiComponent } from '../radnik-dokumenti/radnik-dokumenti.component';
+import { DokumentacijaProvjeraComponent } from '../dokumentacija-provjera/dokumentacija-provjera.component';
 
 @Component({
   selector: 'app-radnik-profil',
   standalone: true,
-  imports: [RouterLink, DatePipe, DozvolaFormComponent, RadnikDokumentiComponent],
+  imports: [RouterLink, DatePipe, DozvolaFormComponent, RadnikDokumentiComponent, DokumentacijaProvjeraComponent],
   templateUrl: './radnik-profil.component.html',
   styleUrl: './radnik-profil.component.scss'
 })
 export class RadnikProfilComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private radnikService = inject(RadnikService);
 
   radnik = signal<Radnik | null>(null);
@@ -37,13 +40,12 @@ export class RadnikProfilComponent implements OnInit {
     return r ? `${r.ime.charAt(0)}${r.prezime.charAt(0)}`.toUpperCase() : '';
   });
 
-  // Aktualna dozvola je ona s najkasnijim datumom isteka.
+  private dokumentiCmp = viewChild(RadnikDokumentiComponent);
+  private dozvoleCard = viewChild<ElementRef<HTMLElement>>('dozvoleCard');
+
   aktualnaDozvola = computed<RadnaDozvola | null>(() => {
-    const dozvole = (this.radnik()?.dozvole ?? []).filter(d => d.datum_isteka);
-    return dozvole.reduce<RadnaDozvola | null>(
-      (najnovija, d) => !najnovija || d.datum_isteka > najnovija.datum_isteka ? d : najnovija,
-      null
-    );
+    const r = this.radnik();
+    return r ? aktualnaDozvola(r) : null;
   });
 
   danaDoIsteka = computed(() => {
@@ -79,6 +81,26 @@ export class RadnikProfilComponent implements OnInit {
       dozvole: [...r.dozvole.filter(d => d.id !== dozvola.id), dozvola]
         .sort((a, b) => (b.datum_isteka ?? '').localeCompare(a.datum_isteka ?? ''))
     });
+  }
+
+  onDokumentiChange(dokumenti: Dokument[]): void {
+    this.radnik.update(r => r && { ...r, dokumenti });
+  }
+
+  // Otvara unos koji nedostaje za odabranu stavku dokumentacije.
+  popuni(stavka: StavkaDokumentacije): void {
+    const r = this.radnik();
+    if (stavka.kljuc === 'broj_putovnice' && r) {
+      this.router.navigate(['/radnici', r.id, 'uredi']);
+    } else if (stavka.vrstaDokumenta) {
+      const dozvola = stavka.kljuc === 'dozvola_pdf' ? this.aktualnaDozvola()?.id ?? null : null;
+      this.dokumentiCmp()?.otvoriFormu(stavka.vrstaDokumenta, dozvola);
+    } else if (stavka.kljuc === 'dozvola') {
+      if (this.urediDozvolu() === null) {
+        this.urediDozvolu.set('nova');
+      }
+      this.dozvoleCard()?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   obrisiDozvolu(dozvola: RadnaDozvola): void {

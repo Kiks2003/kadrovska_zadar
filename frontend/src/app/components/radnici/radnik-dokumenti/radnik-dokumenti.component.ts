@@ -1,4 +1,4 @@
-import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, input, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -26,8 +26,11 @@ const MAX_MB = 10;
 export class RadnikDokumentiComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private radnikService = inject(RadnikService);
+  private host = inject(ElementRef<HTMLElement>);
 
   radnik = input.required<Radnik>();
+  // Javlja profilu promjenu popisa, da se ažurira provjera dokumentacije.
+  dokumentiChange = output<Dokument[]>();
 
   dokumenti = signal<Dokument[]>([]);
   prikaziFormu = signal(false);
@@ -70,12 +73,13 @@ export class RadnikDokumentiComponent implements OnInit, OnDestroy {
       : `${(bajtovi / 1024 / 1024).toFixed(1)} MB`;
   }
 
-  otvoriFormu(): void {
-    this.form.reset({ naziv: '', vrsta: 'ostalo', dozvola: null });
+  otvoriFormu(vrsta: VrstaDokumenta = 'ostalo', dozvola: number | null = null): void {
+    this.form.reset({ naziv: '', vrsta, dozvola });
     this.odabranaDatoteka.set(null);
     this.datotekaError.set(null);
     this.error.set(null);
     this.prikaziFormu.set(true);
+    this.host.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   onFileChange(event: Event): void {
@@ -127,6 +131,7 @@ export class RadnikDokumentiComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: dokument => {
         this.dokumenti.update(list => [dokument, ...list]);
+        this.dokumentiChange.emit(this.dokumenti());
         this.prikaziFormu.set(false);
       },
       error: (err: HttpErrorResponse) => this.error.set(parseApiError(err))
@@ -180,6 +185,7 @@ export class RadnikDokumentiComponent implements OnInit, OnDestroy {
           this.zatvoriPregled();
         }
         this.dokumenti.update(list => list.filter(d => d.id !== dokument.id));
+        this.dokumentiChange.emit(this.dokumenti());
       },
       error: (err: HttpErrorResponse) => this.error.set(parseApiError(err))
     });

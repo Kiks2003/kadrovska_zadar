@@ -1,5 +1,5 @@
 .home-wrapper {
-  max-width: 480px;
+  max-width: 640px;
 }
 
 h2 {
@@ -9,4 +9,49 @@ h2 {
 
 p {
   color: var(--color-text-muted);
+}
+
+h3 {
+  margin: var(--space-5) 0 var(--space-3);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.muted {
+  font-size: var(--font-size-sm);
+}
+
+.upozorenje {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+}
+
+a.upozorenje:hover {
+  filter: brightness(0.97);
+}
+
+.upozorenje.danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.upozorenje.warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.upozorenje.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.strelica {
+  margin-left: auto;
 }

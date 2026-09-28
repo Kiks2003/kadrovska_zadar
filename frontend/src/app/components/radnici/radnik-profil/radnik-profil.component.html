@@ -41,6 +41,8 @@
       </div>
     }
 
+    <app-dokumentacija-provjera [radnik]="r" (popuni)="popuni($event)" />
+
     <section class="card">
       <h3>Osobni podaci</h3>
       <dl>
@@ -72,7 +74,7 @@
       </dl>
     </section>
 
-    <section class="card">
+    <section class="card" #dozvoleCard>
       <div class="card-header">
         <h3>Radne dozvole</h3>
         @if (urediDozvolu() === null) {
@@ -144,7 +146,7 @@
       }
     </section>
 
-    <app-radnik-dokumenti [radnik]="r" />
+    <app-radnik-dokumenti [radnik]="r" (dokumentiChange)="onDokumentiChange($event)" />
 
     @if (r.napomena) {
       <section class="card">

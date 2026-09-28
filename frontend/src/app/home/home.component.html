@@ -1,4 +1,26 @@
 <div class="home-wrapper">
   <h2>Dobrodošao/la, {{ loginService.korisnik()?.username }}</h2>
   <p>Uspješno si prijavljen/a u aplikaciju Kadrovska Zadar.</p>
+
+  <section class="upozorenja">
+    <h3>Upozorenja</h3>
+    @if (error()) {
+      <p class="muted">Upozorenja se trenutno ne mogu učitati.</p>
+    } @else if (upozorenja() === null) {
+      <p class="muted">Učitavanje...</p>
+    } @else {
+      @for (u of upozorenja(); track u.tekst) {
+        <a class="upozorenje" [class]="u.razina" routerLink="/radnici" [queryParams]="u.filter">
+          <i [class]="u.ikona" aria-hidden="true"></i>
+          <span><strong>{{ u.broj }}</strong> {{ radnika(u.broj) }} {{ u.tekst }}</span>
+          <i class="fa fa-chevron-right strelica" aria-hidden="true"></i>
+        </a>
+      } @empty {
+        <div class="upozorenje success">
+          <i class="fa fa-check-circle" aria-hidden="true"></i>
+          <span>Svi aktivni radnici imaju potpunu dokumentaciju i važeće dozvole.</span>
+        </div>
+      }
+    }
+  </section>
 </div>

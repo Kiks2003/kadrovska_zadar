@@ -9,11 +9,12 @@ import { RadnikService } from '../../../services/radnik.service';
 import { Radnik, STATUS_LABELS, VRSTA_DOZVOLE_LABELS, VrstaDozvole } from '../../../models/radnik';
 import { parseApiError } from '../../../shared/parse-api-error';
 import { stanjeDozvole } from '../../../shared/stanje-dozvole';
+import { nedostaje } from '../../../shared/dokumentacija';
 
 // Mora odgovarati PAGE_SIZE u conf/settings/rest.py.
 const PAGE_SIZE = 10;
 
-const FILTERI = ['search', 'status', 'vrsta_dozvole', 'stanje_dozvole', 'poslodavac', 'struka'] as const;
+const FILTERI = ['search', 'status', 'vrsta_dozvole', 'stanje_dozvole', 'dokumentacija', 'poslodavac', 'struka'] as const;
 type Filter = typeof FILTERI[number];
 
 @Component({
@@ -48,6 +49,7 @@ export class RadniciListComponent implements OnInit {
     status: '',
     vrsta_dozvole: '',
     stanje_dozvole: '',
+    dokumentacija: '',
     poslodavac: '',
     struka: ''
   });
@@ -124,6 +126,15 @@ export class RadniciListComponent implements OnInit {
       (max, d) => d.datum_isteka && (!max || d.datum_isteka > max) ? d.datum_isteka : max,
       null
     );
+  }
+
+  nedostajeTekst(radnik: Radnik): string | null {
+    const stavke = nedostaje(radnik);
+    return stavke.length ? 'Nedostaje: ' + stavke.map(s => s.naziv).join(', ') : null;
+  }
+
+  brojNedostaje(radnik: Radnik): number {
+    return nedostaje(radnik).length;
   }
 
   remove(radnik: Radnik): void {

@@ -1,0 +1,28 @@
+<section class="card" [class.potpuna]="brojNedostaje() === 0">
+  <div class="card-header">
+    <h3>Dokumentacija</h3>
+    @if (brojNedostaje() === 0) {
+      <span class="pill success"><i class="fa fa-check"></i> Potpuna</span>
+    } @else {
+      <span class="pill danger">
+        <i class="fa fa-exclamation-triangle"></i>
+        Nedostaje {{ brojNedostaje() }} od {{ stavke().length }}
+      </span>
+    }
+  </div>
+
+  <ul>
+    @for (s of stavke(); track s.kljuc) {
+      <li>
+        <i class="fa" [class.fa-check-circle]="s.ispunjeno" [class.fa-times-circle]="!s.ispunjeno" aria-hidden="true"></i>
+        <span>{{ s.naziv }}</span>
+        @if (!s.ispunjeno) {
+          <span class="napomena">{{ s.napomena }}</span>
+          <button type="button" class="btn-link" (click)="popuni.emit(s)">
+            {{ s.vrstaDokumenta ? 'Učitaj' : s.kljuc === 'broj_putovnice' ? 'Upiši' : 'Dodaj' }}
+          </button>
+        }
+      </li>
+    }
+  </ul>
+</section>

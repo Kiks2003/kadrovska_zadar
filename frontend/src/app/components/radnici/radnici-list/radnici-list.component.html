@@ -44,6 +44,15 @@
     </div>
 
     <div class="field">
+      <label for="f_dokumentacija">Dokumentacija</label>
+      <select id="f_dokumentacija" formControlName="dokumentacija">
+        <option value="">Sva</option>
+        <option value="potpuna">Potpuna</option>
+        <option value="nepotpuna">Nepotpuna</option>
+      </select>
+    </div>
+
+    <div class="field">
       <label for="f_poslodavac">Poslodavac</label>
       <input id="f_poslodavac" type="text" formControlName="poslodavac">
     </div>
@@ -90,6 +99,7 @@
           <th>Poslodavac</th>
           <th>Status</th>
           <th>Dozvola ističe</th>
+          <th>Dokumentacija</th>
           <th></th>
         </tr>
       </thead>
@@ -111,6 +121,19 @@
                 <span class="istek" [class]="stanjeDozvole(istek)">{{ istek | date:'dd.MM.yyyy.' }}</span>
               } @else {
                 <span class="istek bez">Nema</span>
+              }
+            </td>
+            <td>
+              @if (nedostajeTekst(r); as tekst) {
+                <span class="dokumentacija nepotpuna" [title]="tekst">
+                  <i class="fa fa-exclamation-triangle"></i>
+                  Nedostaje {{ brojNedostaje(r) }}
+                </span>
+              } @else {
+                <span class="dokumentacija potpuna" title="Sva dokumentacija je dostavljena">
+                  <i class="fa fa-check"></i>
+                  Potpuna
+                </span>
               }
             </td>
             <td class="actions">
